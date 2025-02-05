@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Parameters
-N_rx = 2
+N_rx = 4
 
 QPSK_vec = np.array([1 + 1j, 1 - 1j, -1 + 1j, -1 - 1j]) / np.sqrt(2)
 
@@ -21,6 +21,7 @@ CombinationLoc[1, :] = np.mod(np.arange(16), 4).astype(int)
 CombinationMat = QPSK_vec[CombinationLoc]
 
 for k in range(len(SNRdB)):
+    print(f"SNR {k}dB")
     s_hat_ZF = np.zeros((2, N), dtype=complex)
     s_tilde_ML = np.zeros((2, N), dtype=complex)
     
@@ -33,7 +34,7 @@ for k in range(len(SNRdB)):
         # Signal generation
         H = (np.random.randn(N_rx, 2) + 1j * np.random.randn(N_rx, 2)) / np.sqrt(2)
         
-        y = H @ (1 / np.sqrt(2)) * s[:, kk] + rho * n[:, kk]
+        y = (H @ s[:, kk]) * (1 / np.sqrt(2)) + rho * n[:, kk]
         
         # Signal Detection ZF
         s_hat_ZF[:, kk] = np.linalg.pinv(1 / np.sqrt(2) * H) @ y

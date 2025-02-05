@@ -1,5 +1,10 @@
+#!/usr/bin/env python3
+
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+import os
+mpl.rcParams["savefig.directory"] = os.chdir(os.path.dirname(__file__))
 
 class WirelessChannelModel:
     def __init__(self, f_max, fir_length=4096):
@@ -11,7 +16,6 @@ class WirelessChannelModel:
         # ---------- Construct the Jakes PSD -----------
         FreqAxis = np.fft.fftfreq(self.fir_length, 1 / self.sampling_freq)
         jakes_psd_nonzero_range = np.abs(FreqAxis) <= f_max  # Limit FreqAxis to the range -f_max to f_max
-        print(FreqAxis)
         # That is the Jakes PSD - we want our generated signal PSD to look exactly like that.
         # We evaluate it in every point on the freq axis
         jakes_psd = np.zeros_like(FreqAxis)
@@ -28,19 +32,19 @@ class WirelessChannelModel:
         
         #
         ## Plot the Frequency Response G(f)
-        plt.figure()
-        plt.plot(np.linspace(0, self.sampling_freq - self.sampling_freq / len(shaping_filter_freq_domain), len(shaping_filter_freq_domain)), shaping_filter_freq_domain)
-        plt.grid(True)
-        plt.title("The Frequency Response G(f)")
-        plt.xlabel("Frequency (Hz)")
-        plt.show()
+        #plt.figure()
+        #plt.plot(np.linspace(0, self.sampling_freq - self.sampling_freq / len(shaping_filter_freq_domain), len(shaping_filter_freq_domain)), shaping_filter_freq_domain)
+        #plt.grid(True)
+        #plt.title("The Frequency Response G(f)")
+        #plt.xlabel("Frequency (Hz)")
+        #plt.show()
 
         # Plot the Time Domain Filter
-        plt.figure()
-        plt.stem(np.real(shaping_filter))
-        plt.grid(True)
-        plt.title("The Time Domain Filter")
-        plt.show()
+        #plt.figure()
+        #plt.stem(np.real(shaping_filter))
+        #plt.grid(True)
+        #plt.title("The Time Domain Filter")
+        #plt.show()
 
         #
         # Generate the Fading Processes
@@ -64,10 +68,10 @@ class WirelessChannelModel:
         #
         coherence_time = 1 / (5 * f_max)
         
-        short_period_secs = coherence_time / 8
-        short_period_samples = int(np.fix(short_period_secs * self.sampling_freq))
-        long_period_secs = coherence_time * 10
-        long_period_samples = int(np.fix(long_period_secs * self.sampling_freq))
+        small_delta = coherence_time / 8
+        short_period_samples = int(np.fix(small_delta * self.sampling_freq))
+        long_delta = coherence_time * 10
+        long_period_samples = int(np.fix(long_delta * self.sampling_freq))
 
         #
         # Compute the Channel Responses
